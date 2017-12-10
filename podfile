@@ -7,9 +7,9 @@ target 'BitcoinApp' do
 
 
     pod 'Alamofire', '~> 4.5'
-
-
+    pod "DeviceLayout"
+	
     pod 'SwiftyJSON'
- 
+ 	
 
 end

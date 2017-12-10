@@ -1,15 +1,21 @@
 PODS:
   - Alamofire (4.6.0)
+  - Device (2.0.1)
+  - DeviceLayout (0.1.3):
+    - Device (~> 2.0.0)
   - SwiftyJSON (4.0.0)
 
 DEPENDENCIES:
   - Alamofire (~> 4.5)
+  - DeviceLayout
   - SwiftyJSON
 
 SPEC CHECKSUMS:
   Alamofire: f41a599bd63041760b26d393ec1069d9d7b917f4
+  Device: 7dd12a4fc8a72a90211f2c9ac8975a728322a148
+  DeviceLayout: ac2a96c988e1a3144a3f5f3e4da7ab958ca8cff4
   SwiftyJSON: 070dabdcb1beb81b247c65ffa3a79dbbfb3b48aa
 
-PODFILE CHECKSUM: 9efef205f4f0daf2701582cfb42824a64f9d4eca
+PODFILE CHECKSUM: c024525b94a0b1a7bacf3da6b929e6b58fa88a07
 
 COCOAPODS: 1.3.1

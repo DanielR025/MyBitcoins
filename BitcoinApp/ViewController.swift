@@ -12,6 +12,7 @@ import SwiftyJSON
 
 
 
+
 class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegate, UIPickerViewDataSource {
     
     
@@ -59,15 +60,25 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
         currencyPicker.delegate = self
         currencyPicker.dataSource = self
         
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(applicationDidBecomeActive(_:)),
+            name: NSNotification.Name.UIApplicationDidBecomeActive,
+            object: nil)
+        
         txtField.text = UserDefaults.standard.string(forKey: "ownBitcoins")
         UserDefaults.standard.register(defaults: ["symbol" : "€"])
         UserDefaults.standard.register(defaults: ["currency" : "EUR"])
         selectedSymbol = UserDefaults.standard.string(forKey: "symbol")!
         currencyName = UserDefaults.standard.string(forKey: "currency")!
         
-        getBitcoinData(url: finalURL)
+        
     }
     
+    
+    @objc func applicationDidBecomeActive(_ notification: NSNotification) {
+        getBitcoinData(url: finalURL)
+    }
     
     
     @IBAction func refreshBtnPressed(_ sender: UIButton) {
