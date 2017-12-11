@@ -13,7 +13,7 @@ import SwiftyJSON
 
 
 
-class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegate, UIPickerViewDataSource {
+class MainVC: UIViewController, UITextFieldDelegate, UIPickerViewDelegate, UIPickerViewDataSource {
     
     
     
@@ -71,8 +71,8 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
         UserDefaults.standard.register(defaults: ["currency" : "EUR"])
         selectedSymbol = UserDefaults.standard.string(forKey: "symbol")!
         currencyName = UserDefaults.standard.string(forKey: "currency")!
-        
-        
+        UserDefaults(suiteName: "group.bitcoinApp")!.set(selectedSymbol, forKey: "symbolWidget")
+        UserDefaults(suiteName: "group.bitcoinApp")!.set(currencyName, forKey: "nameWidget")
     }
     
     
@@ -121,6 +121,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
         self.view.endEditing(true)
     }
     
+    //MARK: - Neworking
     
     func getBitcoinData(url: String) {
 
@@ -148,35 +149,31 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
     func getJSON(input: JSON) {
         
         let json = JSON(input)
-        let name = json["last"].doubleValue
+        let lastPrice = json["last"].doubleValue
         let date = json["display_timestamp"].stringValue
-        //let date = currentTime()
-        let day = json["changes"]["percent"]["day"].stringValue
-        let week = json["changes"]["percent"]["week"].stringValue
+        let percentDay = json["changes"]["percent"]["day"].doubleValue
+        let percentWeek = json["changes"]["percent"]["week"].stringValue
         let dateArray = date.components(separatedBy: " ")
         let newDate = dateArray[0].replacingOccurrences(of: "-", with: ".")
-        var newTime = dateArray[1]
-        newTime.removeLast()
-        newTime.removeLast()
-        newTime.removeLast()
-        kursWertLbl.text = "\(selectedSymbol) \(name)"
+        let newTime = dateArray[1]
+        let formattedDay = String(percentDay)
+        kursWertLbl.text = "\(selectedSymbol) \(lastPrice)"
         datumLbl.text = newDate
-        timeLbl.text = "UTC \(newTime)"
-        bitcoinKurs = name
-        print(day)
+        timeLbl.text = UTCToLocal(date: newTime)
+        bitcoinKurs = lastPrice
         kursLbl.text = "Price in \(currencyName):"
-        if day.contains("-") {
-            lastDay.text = "Day: \(day) %"
+        if formattedDay.contains("-") {
+            lastDay.text = "Day: \(formattedDay) %"
             dayImg.image = UIImage(named: "ArrowDown")
         } else {
-            lastDay.text = "Day: +\(day) %"
+            lastDay.text = "Day: +\(formattedDay) %"
             dayImg.image = UIImage(named: "ArrowUp")
         }
-        if week.contains("-") {
-            lastWeekLbl.text = "Week: \(week) %"
+        if percentWeek.contains("-") {
+            lastWeekLbl.text = "Week: \(percentWeek) %"
             weekImg.image = UIImage(named: "ArrowDown")
         } else {
-            lastWeekLbl.text = "Week: +\(week) %"
+            lastWeekLbl.text = "Week: +\(percentWeek) %"
             weekImg.image = UIImage(named: "ArrowUp")
         }
     }
@@ -197,6 +194,18 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
             return 0.0
         }
         
+    }
+    
+    func UTCToLocal(date:String) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "H:mm:ss"
+        dateFormatter.timeZone = TimeZone(abbreviation: "UTC")
+        
+        let dt = dateFormatter.date(from: date)
+        dateFormatter.timeZone = TimeZone.current
+        dateFormatter.dateFormat = "h:mm a"
+        
+        return dateFormatter.string(from: dt!)
     }
     
     
@@ -225,6 +234,8 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
     }
     
     
+    //MARK: - Picker View
+    
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
         return 1
     }
@@ -243,6 +254,8 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
         currencyName = currencyArray[row]
         UserDefaults.standard.set(selectedSymbol, forKey: "symbol")
         UserDefaults.standard.set(currencyName, forKey: "currency")
+        UserDefaults(suiteName: "group.bitcoinApp")!.set(selectedSymbol, forKey: "symbolWidget")
+        UserDefaults(suiteName: "group.bitcoinApp")!.set(currencyName, forKey: "nameWidget")
         getBitcoinData(url: finalURL)
     }
     
