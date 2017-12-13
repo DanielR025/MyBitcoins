@@ -82,8 +82,13 @@ class MainVC: UIViewController, UITextFieldDelegate, UIPickerViewDelegate, UIPic
     
     
     @IBAction func refreshBtnPressed(_ sender: UIButton) {
-        let feedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
-        feedbackGenerator.impactOccurred()
+        if #available(iOS 10.0, *) {
+            let feedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
+            feedbackGenerator.impactOccurred()
+        } else {
+            // Fallback on earlier versions
+        }
+        
         getBitcoinData(url: finalURL)
         if let kurs = bitcoinKurs {
             calculateBitcoin(txtInput: txtField.text!, kurs: kurs)
